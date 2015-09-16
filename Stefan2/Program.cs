@@ -16,6 +16,8 @@ namespace BlackJack
              //Who is here? Players, descriptions and collection
              //What game are we playing?
              //Play the game
+
+             //Second commit
           
         }
         
