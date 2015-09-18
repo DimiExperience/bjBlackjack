@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BlackJack\BjCardSet.cs" />
     <Compile Include="BlackJack\BjDealer.cs" />
     <Compile Include="BlackJack\BjGame.cs" />
     <Compile Include="Card.cs" />
@@ -49,6 +50,7 @@
     <Compile Include="CardSet.cs" />
     <Compile Include="BlackJackUtil.cs" />
     <Compile Include="BlackJack\BjPlayer.cs" />
+    <Compile Include="DisplayableCardSet.cs" />
     <Compile Include="Game\GameBase.cs" />
     <Compile Include="Player\Dealer.cs" />
     <Compile Include="Player\Shark.cs" />

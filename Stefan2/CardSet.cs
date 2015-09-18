@@ -62,7 +62,7 @@ namespace CardPhun
             _mCards.AddRange(set._mCards);
         }
 
-        public int GetSumOfCards()
+        public virtual int GetSumOfCards()
         {
             return _mCards == null ? 0 : _mCards.Sum(c => c.Number); //Procitaj ili pluralsight: LINQ, Lambda Expressions
 
@@ -73,6 +73,11 @@ namespace CardPhun
             //    sum += c.Number;
             //}
         }
+
+        public List<Card> GetCardList()
+        {
+            return _mCards;
+        } 
 
         public override string ToString()
         {

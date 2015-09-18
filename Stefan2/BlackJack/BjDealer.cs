@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Player;
 
-namespace Stefan2.BlackJack
+namespace BlackJack
 {
     public class BjDealer : Dealer
     {

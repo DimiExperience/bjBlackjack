@@ -1,5 +1,6 @@
 ﻿using System;
 using CardPhun;
+using Stefan2;
 
 namespace Player
 {
@@ -10,5 +11,6 @@ namespace Player
             Balance = balance;
         }
         public int Balance { get; protected set; }
+
     }
 }

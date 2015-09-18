@@ -64,3 +64,10 @@ namespace CardPhun.Game
         public abstract void Play();
     }
 }
+
+public enum CardCompare
+{
+    WORSE = 0,
+    EQUAL,
+    BETTA
+}
