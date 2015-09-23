@@ -21,8 +21,19 @@ namespace Player
 
         public string Name { get; private set; }
 
-        public CardSet Cards { get; protected set; }
+        private CardSet _mCards;
 
+        public CardSet Cards
+        {
+            get
+            {
+                if (_mCards == null) _mCards = new CardSet();
+                return _mCards;
 
+            }
+            protected set { _mCards = value; }
+        }
     }
+
+
 }

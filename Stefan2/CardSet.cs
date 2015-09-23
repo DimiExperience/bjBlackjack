@@ -59,6 +59,10 @@ namespace CardPhun
 
         public void AddSet(CardSet set)
         {
+            if (_mCards == null)
+            {
+                _mCards = new List<Card>();
+            }
             _mCards.AddRange(set._mCards);
         }
 
