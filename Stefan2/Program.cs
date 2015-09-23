@@ -18,7 +18,13 @@ namespace BlackJack
              //Play the game
 
              //Second commit
-          
+
+             BjGame newGame = new BjGame(1, 100, "Dealer", "Stefan");
+             newGame.Play();
+
+
+
+
         }
         
  /*       private static void Main1(string[] args)

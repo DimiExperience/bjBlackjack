@@ -42,10 +42,14 @@ namespace BlackJack
             Console.WriteLine("{0}: {1}", Dealer.Name, dealersCards);
 
             PLAYER_CHOICE playerChoice = PLAYER_CHOICE.None;
+            
             while (playerChoice != PLAYER_CHOICE.Stay)
             {
                 Console.ReadLine(); //TODO!!!
+                DealCards(1,false);
 
+                
+                
 
                 //Ucitaj sve
 
