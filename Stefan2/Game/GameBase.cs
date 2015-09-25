@@ -61,6 +61,11 @@ namespace CardPhun.Game
             }
         }
 
+        protected void DealCardsDealer(bool dealDealer)
+        {
+            Dealer.Cards.AddToSet(Decks.PopFromSet());
+        }
+
         public abstract void Play();
     }
 }

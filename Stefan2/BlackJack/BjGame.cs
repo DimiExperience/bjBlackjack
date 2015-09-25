@@ -46,11 +46,25 @@ namespace BlackJack
             foreach (var player in Players)
             {
                 var nextStep = ContinuePlay(player);
-                while (nextStep != NextMove.KeepPlaying)
+                while (nextStep == NextMove.KeepPlaying)
                 {
                     DealCards(1, false);
                     Console.WriteLine("{0}: {1}", player.Name, player.Cards);
                     nextStep = ContinuePlay(player);
+                }
+
+                if (nextStep == NextMove.Busted)
+                {
+                    Console.WriteLine("You are busted");
+                }
+                if (nextStep == NextMove.BlackJack)
+                {
+                    Console.WriteLine("BLACKJACK");
+                }
+                if (nextStep == NextMove.Stayed)
+                {
+                    Console.WriteLine("Wise decision, STAYED");
+                    
                 }
 
                 //Sad imas nextStep, iliti razlog zasto smo ispali. Act accordingly. 
@@ -61,8 +75,14 @@ namespace BlackJack
 
                 //If Busted, talk shit to him, continue
 
+
                 //Zapamti kako je player prosao
             }
+
+            
+
+
+
 
             //Ovde dealer igra, i sabiraju se scores svakog playera
 
@@ -78,19 +98,30 @@ namespace BlackJack
 
             var bjPlayer = player as BjPlayer;
 
-            //ako se sjebo,
-            return NextMove.Busted;
+            if (player.Cards.GetSumOfCards() >21)
+            {
+                return NextMove.Busted;
+            }
 
-            //ako je blackjack,
-            return NextMove.BlackJack;
+
+            if (player.Cards.GetSumOfCards() == 21)
+            {
+                return NextMove.BlackJack;
+            }
+            
             Console.Write("Hit (H) / Stay (S)?");
 
             var userResponse = Console.ReadLine();
 
-            //ako je otkucao S,
-            return NextMove.Stayed;
+            
 
-            //a ako nista od toga,
+            if (userResponse == "s")
+            {
+                return NextMove.Stayed;
+            }
+            
+
+            
             return NextMove.KeepPlaying;
         }
 
