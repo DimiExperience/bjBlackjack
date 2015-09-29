@@ -21,7 +21,7 @@ namespace BlackJack
             var numOfAces = 0;
             foreach (var card in _mCards)
             {
-                if (card.IsAce)
+                if (card.IsPic)
                 {
                     retVal -= 10;
                     numOfAces++;
@@ -29,7 +29,7 @@ namespace BlackJack
             }
             if (retVal > 21)
             {
-                return -1;
+                return -1;              //necu nista da diram da ne sjebem, ali mislim da ovo ove pravi problem
             }
             if (retVal < 12)
             {
@@ -38,12 +38,18 @@ namespace BlackJack
                     retVal += 10;
                     if (retVal > 11)
                     {
-                        break;
+                        break;          //ne razumem zasto je ovde break
                     }
                 }
             }
 
             return retVal;
         }
+
+        //napraviti override za card sum za slike
+
+
+
+
     }
 }

@@ -43,6 +43,11 @@ namespace CardPhun
         {
             get { return Number == 11; }
         }
+
+        public bool IsPic
+        {
+            get { return Number > 11; }
+        }
     }
 
     public enum Znak
