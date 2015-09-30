@@ -7,7 +7,7 @@ using CardPhun;
 
 namespace Player
 {
-    public abstract class Dealer
+    public abstract class Dealer<T_CARD, T_CARDSET> where T_CARD : Card where T_CARDSET : CardSet<T_CARD>, new()
     {
         protected Dealer(string name)
         {
@@ -21,13 +21,13 @@ namespace Player
 
         public string Name { get; private set; }
 
-        private CardSet _mCards;
+        private T_CARDSET _mCards;
 
-        public CardSet Cards
+        public T_CARDSET Cards
         {
             get
             {
-                if (_mCards == null) _mCards = new CardSet();
+                if (_mCards == null) _mCards = new T_CARDSET();
                 return _mCards;
 
             }

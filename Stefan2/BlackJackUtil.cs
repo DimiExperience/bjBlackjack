@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BlackJack;
 
 namespace CardPhun
 {
@@ -10,7 +11,7 @@ namespace CardPhun
 
     public static class BlackJackUtil
     {
-        public static int GetBlackjackSum(CardSet set)
+        public static int GetBlackjackSum(BjCardSet set)
         {
             var numOfAces = 0;
             var retVal = 0;

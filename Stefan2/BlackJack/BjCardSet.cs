@@ -5,27 +5,31 @@ using System.Text;
 using System.Threading.Tasks;
 using CardPhun;
 using Stefan2;
+using Stefan2.BlackJack;
 
 namespace BlackJack
 {
-    class BjCardSet : DisplayableCardSet
+    public class BjCardSet : CardSet<BjCard>
     {
-        public BjCardSet(CardSet cardSet, int numOfCardsToHide) : base(cardSet, numOfCardsToHide)
+        public BjCardSet() 
         {
-            
+            _mCards = new List<BjCard>();
         }
+
+        public BjCardSet(List<BjCard> cards)
+        {
+            _mCards = cards;
+        }
+
 
         public override int GetSumOfCards()
         {
-            var retVal = base.GetSumOfCards();
+            int retVal = _mCards.Sum(card => card.Value);
             var numOfAces = 0;
-            foreach (var card in _mCards)
+            for (int i = 0; i < _mCards.Count(card => card.IsAce); i++)
             {
-                if (card.IsPic)
-                {
-                    retVal -= 10;
-                    numOfAces++;
-                }
+                retVal -= 10;
+                numOfAces++;
             }
             if (retVal > 21)
             {

@@ -10,11 +10,14 @@ using CardPhun;
 using CardPhun.Game;
 using Player;
 using Stefan2;
+using Stefan2.BlackJack;
 
 namespace BlackJack
 {
-    public class BjGame : GameBase
+    public class BjGame : GameBase<BjPlayer, BjDealer, BjCard, BjCardSet>
     {
+
+
         public BjGame(int numberOdDecks, int initBalance, string dealerName,  params string[] playerNames)
         {
             //TODO: Check parameters
@@ -37,7 +40,7 @@ namespace BlackJack
                 Console.WriteLine("{0}: {1}", player.Name, player.Cards);
             }
 
-            var dealersCards = new BjCardSet(Dealer.Cards, 1);
+            var dealersCards = Dealer.Cards;
 
             Console.WriteLine("{0}: {1}", Dealer.Name, dealersCards);
 
@@ -161,19 +164,17 @@ namespace BlackJack
 
         }
 
-        private NextMove ContinuePlay(Shark player)
+        private NextMove ContinuePlay(BjPlayer player)
         {
+            var sumOfCards = player.Cards.GetSumOfCards();
 
-
-            var bjPlayer = player as BjPlayer;
-
-            if (player.Cards.GetSumOfCards() >21)
+            if (sumOfCards > 21)
             {
                 return NextMove.Busted;
             }
 
 
-            if (player.Cards.GetSumOfCards() == 21)
+            if (sumOfCards == 21)
             {
                 return NextMove.BlackJack;
             }
@@ -184,7 +185,7 @@ namespace BlackJack
 
             
 
-            if (String.Compare(userResponse, "s", true) == 0)
+            if (string.Equals(userResponse, "s", StringComparison.InvariantCultureIgnoreCase))
             {
                 return NextMove.Stayed;
             }
