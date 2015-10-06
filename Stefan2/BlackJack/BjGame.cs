@@ -37,22 +37,27 @@ namespace BlackJack
             DealCards(2, true);
             foreach (var player in Players)
             {
-                Console.WriteLine("{0}: {1}", player.Name, player.Cards);
+                Console.WriteLine("{0}: {1} SUM: {2}", player.Name, player.Cards, player.Cards.GetSumOfCards());
             }
 
             var dealersCards = Dealer.Cards;
 
-            Console.WriteLine("{0}: {1}", Dealer.Name, dealersCards);
+            Console.WriteLine("{0}: {1} SUM: {2}", Dealer.Name, dealersCards, dealersCards.GetSumOfCards());
 
             PLAYER_CHOICE playerChoice = PLAYER_CHOICE.None;
 
             foreach (var player in Players)
             {
+                if (player.Cards.GetSumOfCards() == 21)
+                {
+                    Console.WriteLine("Player BLACKJACK");
+                    continue;
+                }
                 var nextStep = ContinuePlay(player);
                 while (nextStep == NextMove.KeepPlaying)
                 {
                     DealCards(1, false);
-                    Console.WriteLine("{0}: {1}", player.Name, player.Cards);
+                    Console.WriteLine("{0}: {1} SUM: {2}", player.Name, player.Cards, player.Cards.GetSumOfCards());
                     nextStep = ContinuePlay(player);
                 }
 
@@ -168,7 +173,7 @@ namespace BlackJack
         {
             var sumOfCards = player.Cards.GetSumOfCards();
 
-            if (sumOfCards > 21)
+            if (sumOfCards > 21 || sumOfCards < 0)
             {
                 return NextMove.Busted;
             }
@@ -216,8 +221,13 @@ namespace BlackJack
         {
             foreach (var player in Players)
             {
-                Console.WriteLine("{0}: {1}", player.Name, player.Cards);
+                Console.WriteLine("{0}: {1} SUM: {2}", player.Name, player.Cards, player.Cards.GetSumOfCards());
             } 
+        }
+
+        private void PrintDealer()
+        {
+            Console.WriteLine("Dealer: {0} SUM: {1}", Dealer.Cards, Dealer.Cards.GetSumOfCards());
         }
 
         public string decision { get; set; }
