@@ -2,24 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Toore.Shuffling;
 
-namespace CardPhun
+namespace Stefan2
 {
-    public class CardSet
+    public abstract class CardSet<T> where T : Card
     {
-        protected List<Card> _mCards;
-        public void AddToSet(Card card)
+        protected List<T> _mCards;
+        public void AddToSet(T card)
         {
             if (_mCards == null)
             {
-                _mCards = new List<Card>();
+                _mCards = new List<T>();
             }
             _mCards.Add(card);
         }
 
-        public Card SeeCard(int index)
+        public T SeeCard(int index)
         {
             return _mCards[index];
         }
@@ -38,7 +37,7 @@ namespace CardPhun
             }
         }
 
-        public Card PopFromSet(bool first = false)
+        public T PopFromSet(bool first = false)
         {
             if (_mCards == null || _mCards.Count == 0)
             {
@@ -57,24 +56,21 @@ namespace CardPhun
             return retVal;
         }
 
-        public void AddSet(CardSet set)
+        public void AddSet(CardSet<T> set)
         {
+            if (_mCards == null)
+            {
+                _mCards = new List<T>();
+            }
             _mCards.AddRange(set._mCards);
         }
 
-        public virtual int GetSumOfCards()
-        {
-            return _mCards == null ? 0 : _mCards.Sum(c => c.Number); //Procitaj ili pluralsight: LINQ, Lambda Expressions
+        public abstract int GetSumOfCards();
+/*        {
+            return _mCards == null ? 0 : _mCards.Sum(c => c.Value); //Procitaj ili pluralsight: LINQ, Lambda Expressions
+        }*/
 
-            //Ekvivalent:
-            //var sum = 0;
-            //foreach (var c in _mCards)
-            //{
-            //    sum += c.Number;
-            //}
-        }
-
-        public List<Card> GetCardList()
+        public List<T> GetCardList()
         {
             return _mCards;
         } 

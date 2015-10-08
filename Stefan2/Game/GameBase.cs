@@ -3,29 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Player;
+using Stefan2.Player;
 
-namespace CardPhun.Game
+namespace Stefan2.Game
 {
-    public abstract class GameBase
+    public abstract class GameBase<T_PLAYER, T_DEALER, T_CARD, T_CARDSET> where T_PLAYER : Shark<T_CARD, T_CARDSET> where T_DEALER : Dealer<T_CARD, T_CARDSET> where T_CARD : Card, new() where T_CARDSET : CardSet<T_CARD>, new()
     {
-        public List<Shark> Players { get; private set; }
+        public List<T_PLAYER> Players { get; private set; }
 
-        public Dealer Dealer { get; private set; }
+        public T_DEALER Dealer { get; private set; }
 
-        public CardSet Decks { get; private set; }
+        public T_CARDSET Decks { get; private set; }
 
-        protected void AddPlayer(Shark shark)
+        protected void AddPlayer(T_PLAYER shark)
         {
             if (Players == null)
             {
-                Players = new List<Shark>();
+                Players = new List<T_PLAYER>();
             }
 
             Players.Add(shark);
         }
 
-        protected void SetDealer(Dealer dealer)
+        protected void SetDealer(T_DEALER dealer)
         {
             Dealer = dealer;
         }
@@ -36,11 +36,11 @@ namespace CardPhun.Game
             {
                 throw new ArgumentException("Number of decks has to be greater than 0");
             }
-            Decks = new CardSet();
+            Decks = new T_CARDSET();
 
             for (var i = 0; i < numberOfDecks; i++)
             {
-                Decks.AddSet(new CardDeck(false));
+                Decks.AddSet(new CardDeck<T_CARD>(false));
             }
             Decks.Shuffle();
         }
@@ -61,13 +61,18 @@ namespace CardPhun.Game
             }
         }
 
+        protected void DealCardsDealer(bool dealDealer)
+        {
+            Dealer.Cards.AddToSet(Decks.PopFromSet());
+        }
+
         public abstract void Play();
     }
-}
 
-public enum CardCompare
-{
-    WORSE = 0,
-    EQUAL,
-    BETTA
+    public enum CardCompare
+    {
+        WORSE = 0,
+        EQUAL,
+        BETTA
+    }
 }

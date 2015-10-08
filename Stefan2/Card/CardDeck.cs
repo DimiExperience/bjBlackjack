@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 
-namespace CardPhun
+namespace Stefan2
 {
-    public class CardDeck : CardSet
+    public class CardDeck<T> : CardSet<T> where T : Card, new()
     {
         public CardDeck(bool shuffleIt = true) //Constructor. Executes when you make a new instance (object) of this class.
         {
@@ -15,7 +11,9 @@ namespace CardPhun
                 for (int j = 0; j < 4; j++)
                 {
                     var znak = (Znak)j;
-                    var karta = new Card(i, znak);
+                    var karta = new T();
+                    karta.Number = i;
+                    karta.Suit = znak;
                     AddToSet(karta);
                 }
             }
@@ -23,6 +21,11 @@ namespace CardPhun
             {
                 Shuffle();
             }
+        }
+
+        public override int GetSumOfCards()
+        {
+            return _mCards.Sum(card => card.Value);
         }
     }
 }
