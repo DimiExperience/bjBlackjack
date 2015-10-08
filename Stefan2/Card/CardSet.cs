@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Toore.Shuffling;
 
-namespace CardPhun
+namespace Stefan2
 {
     public abstract class CardSet<T> where T : Card
     {

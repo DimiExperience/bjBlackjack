@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CardPhun;
-using Stefan2;
-using Stefan2.BlackJack;
 
-namespace BlackJack
+namespace Stefan2.BlackJack
 {
     public class BjCardSet : CardSet<BjCard>
     {

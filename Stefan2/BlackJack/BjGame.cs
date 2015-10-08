@@ -1,18 +1,8 @@
 ﻿using System;
-using System.CodeDom;
-using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using BlackJack;
-using CardPhun;
-using CardPhun.Game;
-using Player;
-using Stefan2;
-using Stefan2.BlackJack;
+using Stefan2.Game;
 
-namespace BlackJack
+namespace Stefan2.BlackJack
 {
     public class BjGame : GameBase<BjPlayer, BjDealer, BjCard, BjCardSet>
     {

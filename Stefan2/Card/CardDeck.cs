@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 
-namespace CardPhun
+namespace Stefan2
 {
     public class CardDeck<T> : CardSet<T> where T : Card, new()
     {

@@ -1,8 +1,4 @@
-﻿using System;
-using CardPhun;
-using Stefan2;
-
-namespace Player
+﻿namespace Stefan2.Player
 {
     public abstract class Shark<T_CARD, T_CARDSET> : Dealer<T_CARD, T_CARDSET>
         where T_CARD : Card

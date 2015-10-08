@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BlackJack;
+﻿using Stefan2.BlackJack;
 
-namespace CardPhun
+namespace Stefan2
 {
-    using Toore.Shuffling;
-
     public static class BlackJackUtil
     {
         public static int GetBlackjackSum(BjCardSet set)

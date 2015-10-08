@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Player;
+using Stefan2.Player;
 
-namespace CardPhun.Game
+namespace Stefan2.Game
 {
     public abstract class GameBase<T_PLAYER, T_DEALER, T_CARD, T_CARDSET> where T_PLAYER : Shark<T_CARD, T_CARDSET> where T_DEALER : Dealer<T_CARD, T_CARDSET> where T_CARD : Card, new() where T_CARDSET : CardSet<T_CARD>, new()
     {
@@ -68,11 +68,11 @@ namespace CardPhun.Game
 
         public abstract void Play();
     }
-}
 
-public enum CardCompare
-{
-    WORSE = 0,
-    EQUAL,
-    BETTA
+    public enum CardCompare
+    {
+        WORSE = 0,
+        EQUAL,
+        BETTA
+    }
 }
