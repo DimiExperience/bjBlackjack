@@ -1,17 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CardPhun.PokerGame
+﻿namespace CardPhun.PokerGame
 {
-    class HandEvaluator
+    internal class HandEvaluator
     {
-
-
-
-
-
     }
 }

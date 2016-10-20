@@ -1,67 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CardPhun
+﻿namespace CardPhun.Card
 {
-
-
     public abstract class Card
     {
-
-        public Card()
+        protected Card()
         {
-            
         }
 
-        //private int _mNumber;
 
-        //public int Number
-        //{
-        //    get
-        //    {
-        //        return _mNumber;
-        //    }
-        //    set
-        //    {
-        //        _mNumber = value;
-        //    }
-        //}
-
-        public Card(int number, Znak suit)
+        protected Card(int number, Znak suit)
         {
             Number = number;
             Suit = suit;
         }
 
-        public virtual int Number { get; set; }
-        public Znak Suit { get; set; }
+        public int Number { get; set; }
+        public Znak Suit { private get; set; }
+
+        public bool IsAce => Number == 11;
+
+        protected bool IsPic => Number > 11;
+
+        public abstract int Value { get; }
 
         public override string ToString()
         {
-            return string.Format("{0} {1}", Number, Suit);
+            return $"{Number} {Suit}";
         }
-
-        public bool IsAce
-        {
-            get { return Number == 11; }
-        }
-
-        public bool IsPic
-        {
-            get { return Number > 11; }
-        }
-
-        public abstract int Value { get; }
     }
 
     public enum Znak
     {
-        CLUBS = 0,
-        HEARTS,
-        SPADES,
-        DIAMONDS
     }
 }

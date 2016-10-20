@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Linq;
 using CardPhun.Game;
-using CardPhun.BlackJack;
 
-namespace BlackJack
+namespace CardPhun.BlackJack
 {
     public class BjGame : GameBase<BjPlayer, BjDealer, BjCard, BjCardSet>
     {
@@ -20,10 +19,10 @@ namespace BlackJack
                 AddPlayer(new BjPlayer(playerNames.ElementAt(i), initBalance));
         }
 
-        public string Decision { get; set; }
+        private string Decision { get; set; }
 
 
-        public override void Play()
+        public virtual void Play()
         {
             foreach (var player in Players)
             {
@@ -33,7 +32,7 @@ namespace BlackJack
                 }
                 Console.WriteLine("Player {0}: How much you wanna bet? Balance: {1}?", player.Name, player.Balance);
                 player.Bet = Math.Abs(Convert.ToInt32(Console.ReadLine()));
-                    //TODO: Fix if someone inputs letter instead of number
+                //TODO: Fix if someone inputs letter instead of number
                 while ((player.Bet > player.Balance) || (player.Bet == 0))
                 {
                     Console.WriteLine("Wrong input, try again");
@@ -89,7 +88,7 @@ namespace BlackJack
 
             while ((dealersCards.GetSumOfCards() < 17) && (dealersCards.GetSumOfCards() > 0))
             {
-                DealCardsDealer(true);
+                DealCardsDealer();
                 PrintDealerAllCards();
             }
 
@@ -169,14 +168,6 @@ namespace BlackJack
             BlackJack,
             Busted,
             KeepPlaying
-        }
-
-
-        private enum PlayerChoice
-        {
-            None,
-            Hit,
-            Stay
         }
     }
 }

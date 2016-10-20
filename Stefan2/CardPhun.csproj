@@ -53,7 +53,6 @@
     <Compile Include="BlackJack\BjPlayer.cs" />
     <Compile Include="Game\GameBase.cs" />
     <Compile Include="Player\Dealer.cs" />
-    <Compile Include="Player\proba.cs" />
     <Compile Include="Player\Shark.cs" />
     <Compile Include="PokerGame\HandEvaluator.cs" />
     <Compile Include="Program.cs" />

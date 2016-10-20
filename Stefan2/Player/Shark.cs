@@ -1,19 +1,17 @@
-﻿using System;
-using CardPhun;
-using CardPhun;
+﻿using CardPhun.Card;
 
-namespace Player
+namespace CardPhun.Player
 {
-    public abstract class Shark<T_CARD, T_CARDSET> : Dealer<T_CARD, T_CARDSET>
-        where T_CARD : Card
-        where T_CARDSET : CardSet<T_CARD>, new()
+    public abstract class Shark<TCard, TCardset> : Dealer<TCard, TCardset>
+        where TCard : Card.Card
+        where TCardset : CardSet<TCard>, new()
     {
         protected Shark(string name, int balance) : base(name)
         {
             Balance = balance;
         }
+
         public int Balance { get; set; }
         public int Bet { get; set; }
-
     }
 }

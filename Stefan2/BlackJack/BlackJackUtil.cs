@@ -1,28 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BlackJack;
-
-namespace CardPhun
+﻿namespace CardPhun.BlackJack
 {
-    using Toore.Shuffling;
-
-    public static class BlackJackUtil
+    public static class BlackJackUtil //TODO: WTF? do we use this?
     {
         public static int GetBlackjackSum(BjCardSet set)
         {
             var numOfAces = 0;
             var retVal = 0;
-            for (int i = 0;  i < set.Count; i++)
+            for (var i = 0; i < set.Count; i++)
             {
                 var card = set.SeeCard(i);
                 if (card.Number == 11)
                 {
                     numOfAces++;
                     retVal++;
-                } else if (card.Number > 11)
+                }
+                else if (card.Number > 11)
                 {
                     retVal += 10;
                 }
@@ -31,13 +23,9 @@ namespace CardPhun
                     retVal += card.Number;
                 }
             }
-            for (int i = 0; i < numOfAces; i++)
-            {
+            for (var i = 0; i < numOfAces; i++)
                 if (retVal < 12)
-                {
                     retVal += 10;
-                }
-            }
             return retVal;
         }
     }
