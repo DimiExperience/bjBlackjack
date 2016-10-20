@@ -38,6 +38,7 @@ namespace CardPhun
             }
         }
 
+        
         public T PopFromSet(bool first = false)
         {
             if (_mCards == null || _mCards.Count == 0)

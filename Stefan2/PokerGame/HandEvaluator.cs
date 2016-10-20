@@ -4,9 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Stefan2.PokerGame
+namespace CardPhun.PokerGame
 {
     class HandEvaluator
     {
+
+
+
+
+
     }
 }

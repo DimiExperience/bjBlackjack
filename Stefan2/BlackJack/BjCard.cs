@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CardPhun;
 
-namespace Stefan2.BlackJack
+namespace CardPhun.BlackJack
 {
     public class BjCard : Card
     {

@@ -1,50 +1,59 @@
 ﻿using System;
-using System.CodeDom;
-using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using BlackJack;
-using CardPhun;
 using CardPhun.Game;
-using Player;
-using Stefan2;
-using Stefan2.BlackJack;
+using CardPhun.BlackJack;
 
 namespace BlackJack
 {
     public class BjGame : GameBase<BjPlayer, BjDealer, BjCard, BjCardSet>
     {
+        private readonly int _numberOfDecks;
 
-
-        public BjGame(int numberOdDecks, int initBalance, string dealerName,  params string[] playerNames)
+        public BjGame(int numberOdDecks, int initBalance, string dealerName, params string[] playerNames)
         {
             //TODO: Check parameters
-
+            _numberOfDecks = numberOdDecks;
             SetInitialCards(numberOdDecks);
             SetDealer(new BjDealer(dealerName));
 
             for (var i = 0; i < playerNames.Length; i++)
-            {
                 AddPlayer(new BjPlayer(playerNames.ElementAt(i), initBalance));
-            }
         }
+
+        public string Decision { get; set; }
 
 
         public override void Play()
         {
-            DealCards(2, true);
             foreach (var player in Players)
             {
-                Console.WriteLine("{0}: {1} SUM: {2}", player.Name, player.Cards, player.Cards.GetSumOfCards());
+                if (player.Balance == 0)
+                {
+                    //TODO: DELETE PLAYER! for now its just gonna get out of game...(in program.cs)
+                }
+                Console.WriteLine("Player {0}: How much you wanna bet? Balance: {1}?", player.Name, player.Balance);
+                player.Bet = Math.Abs(Convert.ToInt32(Console.ReadLine()));
+                    //TODO: Fix if someone inputs letter instead of number
+                while ((player.Bet > player.Balance) || (player.Bet == 0))
+                {
+                    Console.WriteLine("Wrong input, try again");
+                    player.Bet = Math.Abs(Convert.ToInt32(Console.ReadLine()));
+                }
+                player.Balance -= player.Bet;
             }
+
+            if (Decks.GetSumOfCards() < 0)
+                SetInitialCards(_numberOfDecks);
+
+            Dealer.Cards.GetCardList().Clear();
+            foreach (var player in Players)
+                player.Cards.GetCardList().Clear();
+            DealCards(2, true);
+            PrintPlayers();
 
             var dealersCards = Dealer.Cards;
 
-            Console.WriteLine("{0}: {1} SUM: {2}", Dealer.Name, dealersCards, dealersCards.GetSumOfCards());
-
-            PLAYER_CHOICE playerChoice = PLAYER_CHOICE.None;
+            PrintDealerHiddenCard();
 
             foreach (var player in Players)
             {
@@ -57,147 +66,101 @@ namespace BlackJack
                 while (nextStep == NextMove.KeepPlaying)
                 {
                     DealCards(1, false);
-                    Console.WriteLine("{0}: {1} SUM: {2}", player.Name, player.Cards, player.Cards.GetSumOfCards());
+                    PrintPlayers();
                     nextStep = ContinuePlay(player);
                 }
 
                 if (nextStep == NextMove.Busted)
-                {
                     Console.WriteLine("You are busted");
-                }
                 if (nextStep == NextMove.BlackJack)
-                {
                     Console.WriteLine("BLACKJACK");
-                    //da li ovde da dodamo balans i da ga zanemarimo posle, tj da sve sto se tice para odradimo ovde, a samo poredjenje posle
-                }
                 if (nextStep == NextMove.Stayed)
                 {
                     Console.WriteLine("STAYED");
-                    
-                    if (player.Cards.GetSumOfCards() >= 17)
-                    {
-                        Console.WriteLine("Wise decision, STAYED");
-                    }
 
+                    if (player.Cards.GetSumOfCards() >= 17)
+                        Console.WriteLine("Wise decision, STAYED");
                 }
 
-
-
-                // string decision = playerChoice; ovo ocigledno ne radi, kako? (dobra ideja, onda samo ako je stayed uporedjujemo sa dilerom
-                // sta god drugo da je, nema potrebe
-
-                decision = nextStep.ToString(); // ali ovo ce mozda da radi, sada imamo string, pa ga posle proveravamo, right?
-                // BTW onaj gore PLAYER_CHOICE, sta ce nam to, mislim da ovo menja to sto smo hteli da radimo
-
-
-
-                ////Sad imas nextStep, iliti razlog zasto smo ispali. Act accordingly.
-
-                ////If stayed, continue
-
-                ////If Blackjack, then you win, continue.
-
-                ////If Busted, talk shit to him, continue
-
-
-                //Zapamti kako je player prosao > NE ZNAM KAKO.....(TJ. NE ZNAM NA STA MISLIS, 
-                //ZAR NIJE VEC ZAPAMTIO? mozda da mu dodamo string-decision u BjPlayer, pa tu da pamti string)
-
-                //Sustinski, pravilo jeste da dealer hituje dok ne dobije 17, onda ide stay, tako da cu tako probati da odradim,
-                //pa onda da poredimo, ali ona moja verzija je zanimljivija sto se tice pravljenja:) jedino sto ne moze da se iskoristi kasnije
-
-                //I DA, postoji pravilo da ako si dobio 2 cards BlackJack, onda je push, i sigurno si ili dobio pare ili dobio nazad bet
-
-                //nesto sam zeznuo, ne radi vise, to moras da pogledas, a sada cu da probam na pamet da odradim jos koju stvar
-                
-
-
-                
-
-                //i sada compare, ali mi treba pomoc, pa cu ostaviti ovo kada dodjem kod tebe
-
-
+                Decision = nextStep.ToString();
             }
 
             Console.WriteLine("Dealer cards {0}", dealersCards);
 
-            while (dealersCards.GetSumOfCards() < 17 && dealersCards.GetSumOfCards() > 0)  //ovde treba mozda napraviti da se izvrsava samo ako je player stayed ili BlackJack
+            while ((dealersCards.GetSumOfCards() < 17) && (dealersCards.GetSumOfCards() > 0))
             {
                 DealCardsDealer(true);
-                Console.WriteLine("Dealer cards {0}", dealersCards);
+                PrintDealerAllCards();
             }
 
 
             if (dealersCards.GetSumOfCards() == 21)
 
-            {
-                Console.WriteLine("Dealer BLACKJACK, dealer WINS");
-            }
+                Console.WriteLine("Dealer BLACKJACK");
 
             foreach (var player in Players)
-            {
-                if (decision == "Stayed")
-                {
+                if (Decision == "Stayed")
                     if (player.Cards.GetSumOfCards() > dealersCards.GetSumOfCards())
                     {
                         Console.WriteLine("Player {0} WINS", player.Name);
-                        //verovatno ovde dodajemo balans
+                        player.Balance += player.Bet*2;
+                    }
+                    else if ((player.Cards.GetSumOfCards() == 21) && (dealersCards.GetSumOfCards() == 21))
+                    {
+                        if (player.Cards.Count > 4)
+                        {
+                            Console.WriteLine("{0} WINS!", player.Name);
+                            player.Balance += 2*player.Bet;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Both dealer and {0} BLACKJACK", player.Name);
+                            player.Balance += player.Bet;
+                        }
                     }
                     else
                     {
-                        Console.WriteLine("Dealer WINS");
+                        Console.WriteLine("Dealer WINS against {0}", player.Name);
                     }
-
-                }
-
-                //inace, nekada radi nekada ne radi ovaj metod sto skracuje keceve na 1 ako je vise od 21...
-
-                //i da, jako bitno, ne radi 14=>10(ne skracuje kraljeve, dame i zandare)
-
-
-
-            }
-
-
-            //Ovde dealer igra, i sabiraju se scores svakog playera
-
-            //Uporedi kako je ko prosao, i print
-
-            //Za sada samo to odradi i zaboravi o lovi. Svaki igrac odigra po jednu partiju i to je to.
-
-            
-
         }
 
         private NextMove ContinuePlay(BjPlayer player)
         {
             var sumOfCards = player.Cards.GetSumOfCards();
 
-            if (sumOfCards > 21 || sumOfCards < 0)
-            {
+            if ((sumOfCards > 21) || (sumOfCards < 0))
                 return NextMove.Busted;
-            }
 
 
             if (sumOfCards == 21)
-            {
                 return NextMove.BlackJack;
-            }
-            
-            Console.Write("Hit (H) / Stay (S)?");
+
+            Console.Write("{0}: Hit (H) / Stay (S)?", player.Name);
 
             var userResponse = Console.ReadLine();
 
-            
 
             if (string.Equals(userResponse, "s", StringComparison.InvariantCultureIgnoreCase))
-            {
                 return NextMove.Stayed;
-            }
-            
 
-            
+
             return NextMove.KeepPlaying;
+        }
+
+        private void PrintPlayers()
+        {
+            foreach (var player in Players)
+                Console.WriteLine("{0}: {1} SUM: {2}", player.Name, player.Cards, player.Cards.GetSumOfCards());
+        }
+
+        private void PrintDealerHiddenCard()
+        {
+            Console.WriteLine("Dealer: {0} [HIDDEN]", Dealer.Cards.SeeCard(0));
+        }
+
+        private void PrintDealerAllCards()
+        {
+            Console.WriteLine("Dealer: {0} SUM: {1}", Dealer.Cards, Dealer.Cards.GetSumOfCards());
         }
 
         private enum NextMove
@@ -209,27 +172,11 @@ namespace BlackJack
         }
 
 
-
-        private enum PLAYER_CHOICE
+        private enum PlayerChoice
         {
             None,
             Hit,
             Stay
         }
-
-        private void PrintPlayers()
-        {
-            foreach (var player in Players)
-            {
-                Console.WriteLine("{0}: {1} SUM: {2}", player.Name, player.Cards, player.Cards.GetSumOfCards());
-            } 
-        }
-
-        private void PrintDealer()
-        {
-            Console.WriteLine("Dealer: {0} SUM: {1}", Dealer.Cards, Dealer.Cards.GetSumOfCards());
-        }
-
-        public string decision { get; set; }
     }
 }
