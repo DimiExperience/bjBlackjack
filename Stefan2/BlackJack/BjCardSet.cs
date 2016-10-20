@@ -1,47 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CardPhun;
-using Stefan2;
+using CardPhun.Card;
 
-namespace BlackJack
+namespace CardPhun.BlackJack
 {
-    class BjCardSet : DisplayableCardSet
+    public sealed class BjCardSet : CardSet<BjCard>
     {
-        public BjCardSet(CardSet cardSet, int numOfCardsToHide) : base(cardSet, numOfCardsToHide)
+        public BjCardSet()
         {
-            
+            MCards = new List<BjCard>();
         }
 
-        public override int GetSumOfCards()
+        public BjCardSet(List<BjCard> cards)
         {
-            var retVal = base.GetSumOfCards();
+            MCards = cards;
+        }
+
+
+        public int GetSumOfCards()
+        {
+            var retVal = MCards.Sum(card => card.Value);
             var numOfAces = 0;
-            foreach (var card in _mCards)
+            for (var i = 0; i < MCards.Count(card => card.IsAce); i++)
             {
-                if (card.IsAce)
-                {
-                    retVal -= 10;
-                    numOfAces++;
-                }
+                retVal -= 10;
+                numOfAces++;
             }
-            if (retVal > 21)
-            {
-                return -1;
-            }
+            //if (retVal > 21)
+            //{
+            //    return -1;
+            //}
             if (retVal < 12)
-            {
-                for (int i = 0; i < numOfAces; i++)
+                for (var i = 0; i < numOfAces; i++)
                 {
                     retVal += 10;
                     if (retVal > 11)
-                    {
                         break;
-                    }
                 }
-            }
 
             return retVal;
         }

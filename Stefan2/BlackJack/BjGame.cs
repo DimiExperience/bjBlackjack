@@ -1,70 +1,173 @@
 ﻿using System;
-using System.CodeDom;
-using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using BlackJack;
-using CardPhun;
 using CardPhun.Game;
-using Player;
-using Stefan2;
 
-namespace BlackJack
+namespace CardPhun.BlackJack
 {
-    public class BjGame : GameBase
+    public class BjGame : GameBase<BjPlayer, BjDealer, BjCard, BjCardSet>
     {
+        private readonly int _numberOfDecks;
+
         public BjGame(int numberOdDecks, int initBalance, string dealerName, params string[] playerNames)
         {
             //TODO: Check parameters
-
+            _numberOfDecks = numberOdDecks;
             SetInitialCards(numberOdDecks);
             SetDealer(new BjDealer(dealerName));
 
             for (var i = 0; i < playerNames.Length; i++)
-            {
                 AddPlayer(new BjPlayer(playerNames.ElementAt(i), initBalance));
-            }
         }
 
+        private string Decision { get; set; }
 
-        public override void Play()
+
+        public virtual void Play()
         {
-            DealCards(2, true);
             foreach (var player in Players)
             {
-                Console.WriteLine("{0}: {1}", player.Name, player.Cards);
+                if (player.Balance == 0)
+                {
+                    //TODO: DELETE PLAYER! for now its just gonna get out of game...(in program.cs)
+                }
+                Console.WriteLine("Player {0}: How much you wanna bet? Balance: {1}?", player.Name, player.Balance);
+                player.Bet = Math.Abs(Convert.ToInt32(Console.ReadLine()));
+                //TODO: Fix if someone inputs letter instead of number
+                while ((player.Bet > player.Balance) || (player.Bet == 0))
+                {
+                    Console.WriteLine("Wrong input, try again");
+                    player.Bet = Math.Abs(Convert.ToInt32(Console.ReadLine()));
+                }
+                player.Balance -= player.Bet;
             }
 
-            var dealersCards = new BjCardSet(Dealer.Cards, 1);
+            if (Decks.GetSumOfCards() < 0)
+                SetInitialCards(_numberOfDecks);
 
-            Console.WriteLine("{0}: {1}", Dealer.Name, dealersCards);
+            Dealer.Cards.GetCardList().Clear();
+            foreach (var player in Players)
+                player.Cards.GetCardList().Clear();
+            DealCards(2, true);
+            PrintPlayers();
 
-            PLAYER_CHOICE playerChoice = PLAYER_CHOICE.None;
-            while (playerChoice != PLAYER_CHOICE.Stay)
+            var dealersCards = Dealer.Cards;
+
+            PrintDealerHiddenCard();
+
+            foreach (var player in Players)
             {
-                Console.ReadLine(); //TODO!!!
+                if (player.Cards.GetSumOfCards() == 21)
+                {
+                    Console.WriteLine("Player BLACKJACK");
+                    continue;
+                }
+                var nextStep = ContinuePlay(player);
+                while (nextStep == NextMove.KeepPlaying)
+                {
+                    DealCards(1, false);
+                    PrintPlayers();
+                    nextStep = ContinuePlay(player);
+                }
+
+                if (nextStep == NextMove.Busted)
+                    Console.WriteLine("You are busted");
+                if (nextStep == NextMove.BlackJack)
+                    Console.WriteLine("BLACKJACK");
+                if (nextStep == NextMove.Stayed)
+                {
+                    Console.WriteLine("STAYED");
+
+                    if (player.Cards.GetSumOfCards() >= 17)
+                        Console.WriteLine("Wise decision, STAYED");
+                }
+
+                Decision = nextStep.ToString();
+            }
+
+            Console.WriteLine("Dealer cards {0}", dealersCards);
+
+            while ((dealersCards.GetSumOfCards() < 17) && (dealersCards.GetSumOfCards() > 0))
+            {
+                DealCardsDealer();
+                PrintDealerAllCards();
+            }
 
 
-                //Ucitaj sve
+            if (dealersCards.GetSumOfCards() == 21)
 
-             }
+                Console.WriteLine("Dealer BLACKJACK");
 
-            //Na kraju bi trebalo da imas player.Cards sto ako trazis GetSumOfCards() ce ti dati -1 ili neki pozitivan broj.
-
-
-            // Onda isto uradi i za dilera samo sa njegovim pravilima
-
-            //I, to je potez. Posle cemo o lovi.
-
+            foreach (var player in Players)
+                if (Decision == "Stayed")
+                    if (player.Cards.GetSumOfCards() > dealersCards.GetSumOfCards())
+                    {
+                        Console.WriteLine("Player {0} WINS", player.Name);
+                        player.Balance += player.Bet*2;
+                    }
+                    else if ((player.Cards.GetSumOfCards() == 21) && (dealersCards.GetSumOfCards() == 21))
+                    {
+                        if (player.Cards.Count > 4)
+                        {
+                            Console.WriteLine("{0} WINS!", player.Name);
+                            player.Balance += 2*player.Bet;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Both dealer and {0} BLACKJACK", player.Name);
+                            player.Balance += player.Bet;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Dealer WINS against {0}", player.Name);
+                    }
         }
 
-        private enum PLAYER_CHOICE
+        private NextMove ContinuePlay(BjPlayer player)
         {
-            None,
-            Hit,
-            Stay
+            var sumOfCards = player.Cards.GetSumOfCards();
+
+            if ((sumOfCards > 21) || (sumOfCards < 0))
+                return NextMove.Busted;
+
+
+            if (sumOfCards == 21)
+                return NextMove.BlackJack;
+
+            Console.Write("{0}: Hit (H) / Stay (S)?", player.Name);
+
+            var userResponse = Console.ReadLine();
+
+
+            if (string.Equals(userResponse, "s", StringComparison.InvariantCultureIgnoreCase))
+                return NextMove.Stayed;
+
+
+            return NextMove.KeepPlaying;
+        }
+
+        private void PrintPlayers()
+        {
+            foreach (var player in Players)
+                Console.WriteLine("{0}: {1} SUM: {2}", player.Name, player.Cards, player.Cards.GetSumOfCards());
+        }
+
+        private void PrintDealerHiddenCard()
+        {
+            Console.WriteLine("Dealer: {0} [HIDDEN]", Dealer.Cards.SeeCard(0));
+        }
+
+        private void PrintDealerAllCards()
+        {
+            Console.WriteLine("Dealer: {0} SUM: {1}", Dealer.Cards, Dealer.Cards.GetSumOfCards());
+        }
+
+        private enum NextMove
+        {
+            Stayed,
+            BlackJack,
+            Busted,
+            KeepPlaying
         }
     }
 }
