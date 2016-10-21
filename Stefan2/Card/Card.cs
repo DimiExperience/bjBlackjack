@@ -30,5 +30,9 @@
 
     public enum Znak
     {
+        Spades = 0,
+        Hearts,
+        Clubs,
+        Diamonds
     }
 }

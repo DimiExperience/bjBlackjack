@@ -1,4 +1,5 @@
-﻿using CardPhun.BlackJack;
+﻿using System;
+using CardPhun.BlackJack;
 
 namespace CardPhun
 {
@@ -11,8 +12,10 @@ namespace CardPhun
             while (hasBalance)
             {
                 newGame.Play();
-                foreach (var player in newGame.Players)
-                    hasBalance = player.Balance > 0;
+                if (newGame.Players.Count == 0)
+                {
+                    hasBalance = false;
+                }
             }
         }
     }

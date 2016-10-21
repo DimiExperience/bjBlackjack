@@ -7,5 +7,7 @@ namespace CardPhun.BlackJack
         public BjPlayer(string name, int balance) : base(name, balance)
         {
         }
+
+        public BjGame.NextMove NextMove { get; set; }
     }
 }

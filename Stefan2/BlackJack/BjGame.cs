@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Runtime.Remoting.Messaging;
 using CardPhun.Game;
 
 namespace CardPhun.BlackJack
@@ -10,7 +14,6 @@ namespace CardPhun.BlackJack
 
         public BjGame(int numberOdDecks, int initBalance, string dealerName, params string[] playerNames)
         {
-            //TODO: Check parameters
             _numberOfDecks = numberOdDecks;
             SetInitialCards(numberOdDecks);
             SetDealer(new BjDealer(dealerName));
@@ -24,19 +27,22 @@ namespace CardPhun.BlackJack
 
         public virtual void Play()
         {
+            for (var i = 0; i < Players.Count; i++)
+            {
+                if (Players[i].Balance == 0)
+                {
+                    Players.RemoveAt(i);
+                }
+            }
             foreach (var player in Players)
             {
-                if (player.Balance == 0)
-                {
-                    //TODO: DELETE PLAYER! for now its just gonna get out of game...(in program.cs)
-                }
                 Console.WriteLine("Player {0}: How much you wanna bet? Balance: {1}?", player.Name, player.Balance);
-                player.Bet = Math.Abs(Convert.ToInt32(Console.ReadLine()));
-                //TODO: Fix if someone inputs letter instead of number
+                player.Bet = StringToInt(Console.ReadLine());
                 while ((player.Bet > player.Balance) || (player.Bet == 0))
                 {
                     Console.WriteLine("Wrong input, try again");
-                    player.Bet = Math.Abs(Convert.ToInt32(Console.ReadLine()));
+                    player.Bet = StringToInt(Console.ReadLine());
+
                 }
                 player.Balance -= player.Bet;
             }
@@ -46,8 +52,10 @@ namespace CardPhun.BlackJack
 
             Dealer.Cards.GetCardList().Clear();
             foreach (var player in Players)
+            {
                 player.Cards.GetCardList().Clear();
-            DealCards(2, true);
+            }
+            DealCardsEveryone();
             PrintPlayers();
 
             var dealersCards = Dealer.Cards;
@@ -58,22 +66,22 @@ namespace CardPhun.BlackJack
             {
                 if (player.Cards.GetSumOfCards() == 21)
                 {
-                    Console.WriteLine("Player BLACKJACK");
+                    Console.WriteLine("{0} BLACKJACK", player.Name);
                     continue;
                 }
-                var nextStep = ContinuePlay(player);
-                while (nextStep == NextMove.KeepPlaying)
+                ContinuePlay(player);
+                while (player.NextMove == NextMove.KeepPlaying)
                 {
-                    DealCards(1, false);
+                    DealCards(1, false, player);
                     PrintPlayers();
-                    nextStep = ContinuePlay(player);
+                    ContinuePlay(player);
                 }
 
-                if (nextStep == NextMove.Busted)
+                if (player.NextMove == NextMove.Busted)
                     Console.WriteLine("You are busted");
-                if (nextStep == NextMove.BlackJack)
+                if (player.NextMove == NextMove.BlackJack)
                     Console.WriteLine("BLACKJACK");
-                if (nextStep == NextMove.Stayed)
+                if (player.NextMove == NextMove.Stayed)
                 {
                     Console.WriteLine("STAYED");
 
@@ -81,17 +89,16 @@ namespace CardPhun.BlackJack
                         Console.WriteLine("Wise decision, STAYED");
                 }
 
-                Decision = nextStep.ToString();
+                Decision = player.NextMove.ToString();
             }
 
-            Console.WriteLine("Dealer cards {0}", dealersCards);
+            Console.WriteLine("Dealer cards {0} SUM: {1}", dealersCards, dealersCards.GetSumOfCards());
 
             while ((dealersCards.GetSumOfCards() < 17) && (dealersCards.GetSumOfCards() > 0))
             {
                 DealCardsDealer();
                 PrintDealerAllCards();
             }
-
 
             if (dealersCards.GetSumOfCards() == 21)
 
@@ -123,27 +130,56 @@ namespace CardPhun.BlackJack
                     }
         }
 
-        private NextMove ContinuePlay(BjPlayer player)
+        private int StringToInt(string s)
+        {
+            try
+            {
+                var a = int.Parse(s);
+                if (a > 0)
+                {
+                    return a;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+            catch (FormatException)
+            {
+                return 0;
+            }
+        }
+
+
+        public void ContinuePlay(BjPlayer player)
         {
             var sumOfCards = player.Cards.GetSumOfCards();
 
             if ((sumOfCards > 21) || (sumOfCards < 0))
-                return NextMove.Busted;
-
+            {
+                player.NextMove = NextMove.Busted;
+                return;
+            }
 
             if (sumOfCards == 21)
-                return NextMove.BlackJack;
-
+            {
+                player.NextMove = NextMove.BlackJack;
+                return;
+            }
             Console.Write("{0}: Hit (H) / Stay (S)?", player.Name);
 
             var userResponse = Console.ReadLine();
 
 
             if (string.Equals(userResponse, "s", StringComparison.InvariantCultureIgnoreCase))
-                return NextMove.Stayed;
-
-
-            return NextMove.KeepPlaying;
+            {
+                player.NextMove = NextMove.Stayed;
+                return;
+            }
+            if (string.Equals(userResponse, "h", StringComparison.InvariantCultureIgnoreCase))
+            
+                player.NextMove = NextMove.KeepPlaying;
+            
         }
 
         private void PrintPlayers()
@@ -162,7 +198,7 @@ namespace CardPhun.BlackJack
             Console.WriteLine("Dealer: {0} SUM: {1}", Dealer.Cards, Dealer.Cards.GetSumOfCards());
         }
 
-        private enum NextMove
+        public enum NextMove
         {
             Stayed,
             BlackJack,

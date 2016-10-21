@@ -26,10 +26,10 @@ namespace CardPhun.BlackJack
                 retVal -= 10;
                 numOfAces++;
             }
-            //if (retVal > 21)
-            //{
-            //    return -1;
-            //}
+            if (retVal > 21)
+            {
+                return -1;
+            }
             if (retVal < 12)
                 for (var i = 0; i < numOfAces; i++)
                 {

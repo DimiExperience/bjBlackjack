@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CardPhun.BlackJack;
 using CardPhun.Card;
 using CardPhun.Player;
 
@@ -40,14 +41,24 @@ namespace CardPhun.Game
             Decks.Shuffle();
         }
 
-        protected void DealCards(int numberOfCards, bool includeDealer)
+        protected void DealCards(int numberOfCards, bool includeDealer, TPlayer player)
         {
             for (var i = 0; i < numberOfCards; i++)
             {
-                foreach (var player in Players)
                     player.Cards.AddToSet(Decks.PopFromSet());
 
                 if (includeDealer)
+                    Dealer.Cards.AddToSet(Decks.PopFromSet());
+            }
+        }
+        protected void DealCardsEveryone()
+        {
+            for (var i = 0; i < 2; i++)
+            {
+                foreach (var player in Players)
+                { 
+                    player.Cards.AddToSet(Decks.PopFromSet());
+                }
                     Dealer.Cards.AddToSet(Decks.PopFromSet());
             }
         }
