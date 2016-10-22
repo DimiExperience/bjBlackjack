@@ -139,10 +139,7 @@ namespace CardPhun.BlackJack
                 {
                     return a;
                 }
-                else
-                {
-                    return 0;
-                }
+                return 0;
             }
             catch (FormatException)
             {

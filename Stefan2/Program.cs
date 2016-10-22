@@ -8,13 +8,13 @@ namespace CardPhun
         private static void Main()
         {
             var newGame = new BjGame(1, 100, "Dealer", "Stefan", "Pera", "Marko");
-            var hasBalance = true;
-            while (hasBalance)
+            var hasPlayers = true;
+            while (hasPlayers)
             {
                 newGame.Play();
                 if (newGame.Players.Count == 0)
                 {
-                    hasBalance = false;
+                    hasPlayers = false;
                 }
             }
         }
